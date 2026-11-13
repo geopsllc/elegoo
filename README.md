@@ -35,7 +35,7 @@ Give the printer a DHCP reservation so its IP doesn't change.
 
 Serve the folder over plain HTTP and open `http://<server>/?printer=<printer-ip>`. The browser then connects to the printer itself; the IP is remembered and can be changed via the gear icon.
 
-Shortcuts: `F` or double-click the camera for fullscreen.
+Shortcuts: `F` or double-click the camera for fullscreen; `Z` toggles fill (crop to edges, default) vs fit (whole frame).
 
 ## How it talks to the printer
 

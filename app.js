@@ -242,9 +242,21 @@
     else camEl.requestFullscreen?.();
   }
   $("fsBtn").addEventListener("click", toggleFs);
+
+  // Fill (crop to edges, default) vs fit (whole frame, may letterbox).
+  const FIT_KEY = "centauri-monitor.fit";
+  try { camEl.classList.toggle("fit", localStorage.getItem(FIT_KEY) === "1"); } catch {}
+  function toggleFit() {
+    const fit = camEl.classList.toggle("fit");
+    try { localStorage.setItem(FIT_KEY, fit ? "1" : "0"); } catch {}
+  }
+  $("fitBtn").addEventListener("click", toggleFit);
   camEl.addEventListener("dblclick", toggleFs);
   document.addEventListener("keydown", (e) => {
-    if (e.key.toLowerCase() === "f" && !el.settings.open && !e.ctrlKey && !e.metaKey) toggleFs();
+    if (el.settings.open || e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key.toLowerCase();
+    if (k === "f") toggleFs();
+    else if (k === "z") toggleFit();
   });
 
   // ---------- Rendering ----------
@@ -275,7 +287,7 @@
 
     // Job
     const hasJob = !!pi.Filename && (active || ps === 9 || ps === 8);
-    el.filename.textContent = hasJob ? pi.Filename.replace(/\.gcode$/i, "") : "No active print";
+    el.filename.textContent = hasJob ? pi.Filename.replace(/\.gcode$/i, "") : ps === 9 ? "Print finished" : "No active print";
 
     let pct = Number(pi.Progress);
     if (!Number.isFinite(pct) && pi.TotalLayer) pct = (pi.CurrentLayer / pi.TotalLayer) * 100;
@@ -314,7 +326,7 @@
     const c = Number(cur), t = Number(tgt);
     row.querySelector(".cur").textContent = Number.isFinite(c) ? `${c.toFixed(1)}°` : "—";
     row.querySelector(".tgt").textContent = t > 0 ? `/ ${Math.round(t)}°` : "";
-    row.querySelector(".t-bar div").style.width = Number.isFinite(c) ? Math.min(100, (c / max) * 100) + "%" : "0";
+    row.querySelector(".t-bar > *").style.width = Number.isFinite(c) ? Math.min(100, (c / max) * 100) + "%" : "0";
     const at = t > 0 && Math.abs(c - t) <= 3;
     row.classList.toggle("at-temp", at);
     row.classList.toggle("heating", t > 0 && !at);
