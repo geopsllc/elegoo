@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Centauri Monitor</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23111'/><path d='M9 22h14M11 22V12l5-3 5 3v10' stroke='%23f97316' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="layout">
+    <section class="camera" id="camera">
+      <img id="feed" alt="Printer camera feed">
+      <div class="camera-msg" id="camMsg">Connecting to camera…</div>
+      <div class="camera-overlay">
+        <span class="live" id="liveBadge"><i></i>LIVE</span>
+        <span class="clock" id="clock"></span>
+      </div>
+      <button class="icon-btn fs-btn" id="fsBtn" title="Fullscreen (F)" aria-label="Toggle fullscreen">
+        <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+      </button>
+    </section>
+
+    <aside class="panel">
+      <header class="head">
+        <div>
+          <div class="eyebrow" id="machineName">Centauri Carbon</div>
+          <div class="state" id="state"><span class="dot"></span><span id="stateText">Connecting…</span></div>
+        </div>
+        <button class="icon-btn" id="settingsBtn" title="Printer address" aria-label="Settings">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+        </button>
+      </header>
+
+      <section class="card job">
+        <div class="label">Current job</div>
+        <div class="filename" id="filename">—</div>
+        <div class="progress-row">
+          <div class="pct"><span id="pct">0</span><small>%</small></div>
+          <div class="eta">
+            <div><span class="k">Remaining</span><span id="remaining">—</span></div>
+            <div><span class="k">Finishes</span><span id="finish">—</span></div>
+          </div>
+        </div>
+        <div class="bar"><div class="fill" id="bar"></div></div>
+        <div class="stats">
+          <div><span class="k">Layer</span><span id="layer">—</span></div>
+          <div><span class="k">Elapsed</span><span id="elapsed">—</span></div>
+          <div><span class="k">Speed</span><span id="speed">—</span></div>
+        </div>
+      </section>
+
+      <section class="card temps">
+        <div class="label">Temperatures</div>
+        <div class="temp" data-key="nozzle">
+          <div class="t-name">Nozzle</div>
+          <div class="t-val"><span class="cur">—</span><span class="tgt"></span></div>
+          <div class="t-bar"><div></div></div>
+        </div>
+        <div class="temp" data-key="bed">
+          <div class="t-name">Bed</div>
+          <div class="t-val"><span class="cur">—</span><span class="tgt"></span></div>
+          <div class="t-bar"><div></div></div>
+        </div>
+        <div class="temp" data-key="box">
+          <div class="t-name">Chamber</div>
+          <div class="t-val"><span class="cur">—</span><span class="tgt"></span></div>
+          <div class="t-bar"><div></div></div>
+        </div>
+      </section>
+
+      <section class="card fans">
+        <div class="label">Fans</div>
+        <div class="fan-grid">
+          <div><span class="k">Part</span><span id="fanModel">—</span></div>
+          <div><span class="k">Aux</span><span id="fanAux">—</span></div>
+          <div><span class="k">Chamber</span><span id="fanBox">—</span></div>
+        </div>
+      </section>
+
+      <footer class="foot" id="foot">Not connected</footer>
+    </aside>
+  </main>
+
+  <dialog id="settings">
+    <form method="dialog">
+      <h2>Printer address</h2>
+      <p>IP or hostname of your Centauri Carbon on the local network.</p>
+      <input id="hostInput" placeholder="192.168.1.50" autocomplete="off" spellcheck="false" required>
+      <div class="actions">
+        <button value="cancel" formnovalidate class="ghost">Cancel</button>
+        <button value="save" class="primary">Connect</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

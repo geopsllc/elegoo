@@ -1,0 +1,1 @@
+{ "name": "centauri-mock-printer", "private": true, "scripts": { "start": "node mock-printer.js" }, "dependencies": { "ws": "^8.18.0" } }
