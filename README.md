@@ -9,10 +9,10 @@ Plain HTML/CSS/JS, no build step.
 The page is served over HTTPS and Apache proxies the printer, so it works remotely while the printer stays on a private address.
 
 ```bash
-sudo git clone https://github.com/geopsllc/elegoo.git /var/www/centauri-dashboard
+sudo git clone https://github.com/geopsllc/elegoo.git /var/www/html/elegoo
 sudo a2enmod ssl proxy proxy_http proxy_wstunnel headers
-sudo htpasswd -c /var/www/centauri-dashboard/.htpasswd <username>
-sudo cp /var/www/centauri-dashboard/deploy/apache-vhost.conf /etc/apache2/sites-available/centauri.conf
+sudo htpasswd -c /var/www/html/elegoo/.htpasswd <username>
+sudo cp /var/www/html/elegoo/deploy/apache-vhost.conf /etc/apache2/sites-available/centauri.conf
 ```
 
 Edit `centauri.conf` (hostname, cert paths, printer IP), then:
@@ -23,7 +23,7 @@ sudo a2ensite centauri && sudo apachectl configtest && sudo systemctl reload apa
 
 `.htpasswd` lives in the repo folder, is git-ignored, and the vhost refuses to serve it.
 
-Update later with `git pull` in `/var/www/centauri-dashboard`.
+Update later with `git pull` in `/var/www/html/elegoo`.
 
 Proxy mode is automatic on HTTPS pages: the browser uses `./printer/ws` and `./printer/video` on the same host. Force it on or off with `?proxy` / `?proxy=0`.
 
