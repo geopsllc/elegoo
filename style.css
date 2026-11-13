@@ -89,6 +89,7 @@ body {
   cursor: pointer;
   transition: color .15s, border-color .15s, background .15s;
 }
+.icon-btn[hidden] { display: none; }
 .icon-btn:hover { color: var(--text); border-color: #3a3e48; }
 .icon-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .fs-btn {

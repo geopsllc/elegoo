@@ -14,6 +14,17 @@
   const CMD = { STATUS: 0, ATTRIBUTES: 1, VIDEO: 386 };
   const STORAGE_KEY = "centauri-monitor.host";
 
+  // Proxy mode: the web server relays the printer at ./printer/ws and
+  // ./printer/video, so the browser never needs to reach the printer itself.
+  // On automatically for HTTPS pages (direct ws:// would be blocked as mixed content).
+  const PARAMS = new URLSearchParams(location.search);
+  const PROXY = PARAMS.get("proxy") !== "0" && (location.protocol === "https:" || PARAMS.has("proxy"));
+  const proxyUrl = (path, ws) => {
+    const u = new URL("printer/" + path, location.href);
+    if (ws) u.protocol = u.protocol === "https:" ? "wss:" : "ws:";
+    return u.href;
+  };
+
   // CurrentStatus[0] — machine-level state.
   const MACHINE = {
     0: "Idle", 1: "Printing", 2: "Transferring file", 3: "Exposure test", 4: "Self-test",
@@ -42,7 +53,8 @@
     settings: $("settings"), hostInput: $("hostInput"),
   };
 
-  let host = resolveHost();
+  let host = PROXY ? "" : resolveHost();
+  const label = () => (PROXY ? location.host : host);
   let ws = null;
   let mainboardId = "";
   let status = {};
@@ -75,6 +87,7 @@
     restart();
   });
   $("settingsBtn").addEventListener("click", openSettings);
+  if (PROXY) $("settingsBtn").hidden = true;
 
   // ---------- WebSocket ----------
 
@@ -95,12 +108,12 @@
   }
 
   function connect() {
-    if (!host) { setState("No printer set", "idle"); openSettings(); return; }
+    if (!PROXY && !host) { setState("No printer set", "idle"); openSettings(); return; }
     setState("Connecting…", "idle");
-    el.foot.textContent = `Connecting to ${host}…`;
+    el.foot.textContent = `Connecting to ${label()}…`;
 
     try {
-      ws = new WebSocket(`ws://${host}:${WS_PORT}/websocket`);
+      ws = new WebSocket(PROXY ? proxyUrl("ws", true) : `ws://${host}:${WS_PORT}/websocket`);
     } catch (e) {
       setState("Bad address", "err");
       return;
@@ -127,7 +140,7 @@
     ws.onclose = () => {
       clearTimers();
       setState("Offline", "err");
-      el.foot.textContent = `Lost connection to ${host} — retrying…`;
+      el.foot.textContent = `Lost connection to ${label()} — retrying…`;
       stopCamera("Camera offline");
       setTimeout(connect, reconnectDelay);
       reconnectDelay = Math.min(reconnectDelay * 2, 30000);
@@ -184,6 +197,7 @@
   function handleVideo(data) {
     if (data.Ack === 1) return stopCamera("Camera busy — too many viewers connected", true);
     if (data.Ack === 2) return stopCamera("No camera detected");
+    if (PROXY) return startCamera(proxyUrl("video"));
     let url = data.VideoUrl || `${host}:${VIDEO_PORT}/video`;
     if (!/^https?:\/\//.test(url)) url = "http://" + url;
     startCamera(url);
@@ -292,7 +306,7 @@
     el.fanAux.textContent = fan(f.AuxiliaryFan);
     el.fanBox.textContent = fan(f.BoxFan);
 
-    el.foot.textContent = `${host}` + (el.foot.dataset.fw ? ` · FW ${el.foot.dataset.fw}` : "") + " · updated just now";
+    el.foot.textContent = (PROXY ? "via proxy" : host) + (el.foot.dataset.fw ? ` · FW ${el.foot.dataset.fw}` : "") + " · updated just now";
   }
 
   function temp(key, cur, tgt, max) {

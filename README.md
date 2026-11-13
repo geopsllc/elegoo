@@ -4,22 +4,34 @@ A clean, read-only dashboard for the **Elegoo Centauri Carbon**: a big camera fe
 
 Plain HTML/CSS/JS, no build step.
 
-## Run it
+## Deploy behind Apache (HTTPS, recommended)
 
-The page must be served over **plain HTTP** on your LAN (browsers block `ws://` from `https://` pages).
+The page is served over HTTPS and Apache proxies the printer, so it works remotely while the printer stays on a private address.
 
-**Any static server**
 ```bash
-npx http-server . -p 8080
-```
-Open `http://<this-machine>:8080/?printer=<printer-ip>`. The IP is remembered; change it later via the gear icon.
-
-**Docker**
-```bash
-docker build -t centauri-monitor . && docker run -d --restart unless-stopped -p 8080:80 centauri-monitor
+sudo git clone https://github.com/<you>/<repo>.git /var/www/centauri-dashboard
+sudo a2enmod ssl proxy proxy_http proxy_wstunnel headers
+sudo htpasswd -c /etc/apache2/.htpasswd-printer <username>
+sudo cp /var/www/centauri-dashboard/deploy/apache-vhost.conf /etc/apache2/sites-available/centauri.conf
 ```
 
-Opening `index.html` directly from disk also works in most browsers.
+Edit `centauri.conf` (hostname, cert paths, printer IP), then:
+
+```bash
+sudo a2ensite centauri && sudo apachectl configtest && sudo systemctl reload apache2
+```
+
+Update later with `git pull` in `/var/www/centauri-dashboard`.
+
+Proxy mode is automatic on HTTPS pages: the browser uses `./printer/ws` and `./printer/video` on the same host. Force it on or off with `?proxy` / `?proxy=0`.
+
+> **Keep the auth on.** The proxied WebSocket accepts every SDCP command (start/stop/delete), not just the read-only ones this page sends. Anyone who can reach it can control the printer.
+
+Give the printer a DHCP reservation so its IP doesn't change.
+
+## Run it directly on the LAN (no proxy)
+
+Serve the folder over plain HTTP and open `http://<server>/?printer=<printer-ip>`. The browser then connects to the printer itself; the IP is remembered and can be changed via the gear icon.
 
 Shortcuts: `F` or double-click the camera for fullscreen.
 
