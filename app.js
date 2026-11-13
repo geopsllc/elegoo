@@ -175,7 +175,6 @@
     if (msg.Attributes) {
       const a = msg.Attributes;
       el.machineName.textContent = a.Name || a.MachineName || "Centauri Carbon";
-      if (a.FirmwareVersion) el.foot.dataset.fw = a.FirmwareVersion;
     }
     const d = msg.Data;
     if (d && d.Cmd === CMD.VIDEO) handleVideo(d.Data || {});
@@ -318,7 +317,7 @@
     el.fanAux.textContent = fan(f.AuxiliaryFan);
     el.fanBox.textContent = fan(f.BoxFan);
 
-    el.foot.textContent = (PROXY ? "via proxy" : host) + (el.foot.dataset.fw ? ` · FW ${el.foot.dataset.fw}` : "") + " · updated just now";
+    el.foot.textContent = (PROXY ? "via proxy" : host) + " · updated just now";
   }
 
   function temp(key, cur, tgt, max) {

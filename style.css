@@ -123,7 +123,7 @@ body {
 .live.on { display: inline-flex; }
 .live i { width: 7px; height: 7px; border-radius: 50%; background: var(--err); animation: pulse 1.6s infinite; }
 @keyframes pulse { 50% { opacity: .3; } }
-.foot { position: absolute; left: 14px; bottom: 14px; color: #c3c7d0; opacity: .75; pointer-events: none; }
+.foot { position: absolute; right: 14px; top: 14px; color: #c3c7d0; opacity: .75; pointer-events: none; }
 .cam-btns { position: absolute; right: 14px; bottom: 14px; display: flex; gap: 8px; opacity: 0; transition: opacity .2s; }
 .cam-btns .icon-btn { background: rgba(0, 0, 0, .55); backdrop-filter: blur(6px); border-color: transparent; color: #d4d7de; }
 .camera:hover .cam-btns, .cam-btns:focus-within { opacity: 1; }
