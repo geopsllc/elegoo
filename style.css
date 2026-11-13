@@ -1,15 +1,15 @@
 :root {
-  --bg: #0b0c0e;
-  --panel: #131418;
-  --line: #262931;
+  --bg: #15171b;
+  --panel: #1c1f24;
+  --line: #2d3139;
   --text: #eceef2;
   --muted: #8b909c;
-  --accent: #f97316;
-  --ok: #22c55e;
+  --accent: #7dd3fc;
+  --ok: #6ee7b7;
   --warn: #eab308;
   --err: #ef4444;
   --idle: #64748b;
-  --track: #262931;
+  --track: #2d3139;
   color-scheme: dark;
 }
 
@@ -62,7 +62,7 @@ body {
 .filename { font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
 .pct { font-size: 20px; font-weight: 700; letter-spacing: -.01em; }
 .bar { height: 6px; background: var(--track); border-radius: 99px; overflow: hidden; }
-.bar .fill { height: 100%; width: 0; background: linear-gradient(90deg, #fb923c, var(--accent)); border-radius: inherit; transition: width .6s ease; }
+.bar .fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--ok)); border-radius: inherit; transition: width .6s ease; }
 
 .temp { min-width: 74px; }
 .t-val .cur { font-size: 16px; font-weight: 600; }
@@ -131,7 +131,7 @@ body {
 
 /* ---------- Dialog ---------- */
 dialog {
-  background: #1a1c21; color: var(--text);
+  background: #23262d; color: var(--text);
   border: 1px solid var(--line); border-radius: 14px;
   padding: 22px; width: min(380px, calc(100vw - 32px));
 }
