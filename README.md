@@ -11,7 +11,7 @@ The page is served over HTTPS and Apache proxies the printer, so it works remote
 ```bash
 sudo git clone https://github.com/<you>/<repo>.git /var/www/centauri-dashboard
 sudo a2enmod ssl proxy proxy_http proxy_wstunnel headers
-sudo htpasswd -c /etc/apache2/.htpasswd-printer <username>
+sudo htpasswd -c /var/www/centauri-dashboard/.htpasswd <username>
 sudo cp /var/www/centauri-dashboard/deploy/apache-vhost.conf /etc/apache2/sites-available/centauri.conf
 ```
 
@@ -20,6 +20,8 @@ Edit `centauri.conf` (hostname, cert paths, printer IP), then:
 ```bash
 sudo a2ensite centauri && sudo apachectl configtest && sudo systemctl reload apache2
 ```
+
+`.htpasswd` lives in the repo folder, is git-ignored, and the vhost refuses to serve it.
 
 Update later with `git pull` in `/var/www/centauri-dashboard`.
 
