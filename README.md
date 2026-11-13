@@ -9,7 +9,7 @@ Plain HTML/CSS/JS, no build step.
 The page is served over HTTPS and Apache proxies the printer, so it works remotely while the printer stays on a private address.
 
 ```bash
-sudo git clone https://github.com/<you>/<repo>.git /var/www/centauri-dashboard
+sudo git clone https://github.com/geopsllc/elegoo.git /var/www/centauri-dashboard
 sudo a2enmod ssl proxy proxy_http proxy_wstunnel headers
 sudo htpasswd -c /var/www/centauri-dashboard/.htpasswd <username>
 sudo cp /var/www/centauri-dashboard/deploy/apache-vhost.conf /etc/apache2/sites-available/centauri.conf
